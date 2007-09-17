@@ -6,7 +6,7 @@ use warnings FATAL => 'all',  NONFATAL => 'redefine' ;
 use strict;
 use Carp;
 
-use version; our $VERSION = qv('0.0.2');
+use version; our $VERSION = qv('1.0.0');
 
 
 use Apache2::Const -compile => qw(OR_ALL ITERATE OK AUTH_REQUIRED);
@@ -148,7 +148,7 @@ Apache2::MultiAuth - Use a number of authentication modules at runtime
 
 =head1 VERSION
 
-This document describes Apache2::MultiAuth version 0.0.1
+This document describes Apache2::MultiAuth version 1.0.0
 
 
 =head1 SYNOPSIS

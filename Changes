@@ -1,5 +1,9 @@
 Revision history for Apache2-MultiAuth
 
+1.0.0  Mon Sep 17 15:50:22 2007
+       Updating docs and cleaning up debug for release
+
 0.0.1  Thu Jun  7 14:29:48 2007
-       Initial release.
+       Initial port from Apache::MultiAuth.
+
 
