@@ -1,0 +1,122 @@
+Apache2-MultiAuth version 0.0.1
+
+# $id$
+
+NAME 
+
+Apache2::MultiAuth - Use a number of authentication modules at runtime
+
+
+SYNOPSIS
+
+    use Apache2::MultiAuth;
+
+Insert the something like the following into you apache configuration file(s)
+
+
+    PerlLoadModule Apache2::MultiAuth
+    
+    <Location /test>
+       AuthName Test 
+       AuthType Basic
+       
+       # PerlSetVars for various Auth* modules
+       # These here are example values for Apache2::AuthenSmb
+       PerlSetVar myPDC SAMBA
+       PerlSetVar myDOMAIN ARBEITSGRUPPE
+       
+       # These here are example values for Apache2::AuthNetLDAP
+       PerlSetVar BindDN "uid=user1,ou=people,o=acme.com" #optional
+       PerlSetVar BindPWD "password" #optional
+       
+       
+       
+       # Define order and class of Auth modules to try
+       AuthModule Apache2::AuthNetLDAP  Apache::AuthenNIS Apache2::AuthenSmb
+       
+       PerlAuthenHandler Apache2::MultiAuth
+       require valid-user
+     </Location>
+
+The new directive that that Apache2::MultiAuth Provides is AuthModule with 
+the syntax 
+
+    AuthModule <module 1> <module 2> ..... <module 3>
+
+Apache2::MultiAuth does not provide any mechanism to controll the 
+configuration of the auth modules that is will be consulting. Please 
+look the individual modules documentation for specific configuration.
+
+
+DESCRIPTION
+
+Apache2::MultiAuth allows you to specify multiple authentication
+modules, to be tried in order.  If any module in the list returns OK,
+then the user is considered authenticated; if none return OK, then the
+MultiAuth module returns AUTH_REQUIRED and the user is reprompted for 
+credentials. This, depending on the browser, results in a 401 authorization
+required message.
+
+This is useful for cases where, for example, you have several
+authentication schemes:  for example, NIS, SMB, and htpasswd, and some
+of your users are only registered in some of the auth databases.
+Using Apache::MultiAuth, they can be queried in order until the right
+one is found.
+
+In the event that one of these modules returns OK, a note named
+"AuthenticatedBy" will be set, which contains the name of the module
+that returned OK, like so:
+
+    $my $table = APR::Table::make( APR::Pool->new, 1);
+    $table->set("AuthenticatedBy",$module);
+    $r->notes($table);
+
+This can be retrieved by any handler that runs after the authentication
+phase, and can be very useful in logging:
+
+    CustomLog "%h %l %u %t \"%r\" %>s %b %{AuthenticatedBy}n" common_auth
+
+The last field in the common_auth log format will be the name of the module 
+that handled the authentication.
+
+INTERFACE 
+
+Apache2::MultiAUth is does not have a pgrammable interface, although placing 
+
+    PerlSetVar multiauth_print_modules 1
+
+in your apache configuration file will force Apache2::MultiAuth to report 
+the Authenication modules that is it using to the apache log at the log 
+level of warn. 
+
+INSTALLATION
+
+To install this module, run the following commands:
+
+    perl Makefile.PL
+    make
+    make test
+    make install
+
+
+
+DEPENDENCIES
+
+mod_perl2
+
+AUTHORS
+
+    Alex Sayle <alexs@alphacomplex.info>
+    
+Apache2::MultiAuth was adapted from Apache::MultiAuth which was created by 
+
+    Stathy G. Touloumis
+    Marcel M. Weber
+    Darren Chamberlain
+
+COPYRIGHT AND LICENCE
+
+Copyright (C) 2007, Alex Sayle <alexs@alphacomplex.info>
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
